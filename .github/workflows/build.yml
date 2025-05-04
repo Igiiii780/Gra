@@ -1,0 +1,31 @@
+name: Build APK
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install Solar2D builder
+        run: |
+          sudo apt update
+          sudo apt install wget unzip -y
+          wget https://github.com/konkursowy/solar2d-android-builder/releases/latest/download/builder.zip
+          unzip builder.zip -d builder
+          chmod +x builder/build.sh
+
+      - name: Build APK
+        run: |
+          cd builder
+          ./build.sh ../
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: GameAPK
+          path: builder/output/*.apk
